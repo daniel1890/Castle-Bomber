@@ -1,3 +1,4 @@
+// Elementen waar het bord van de speler(s) gevuld mee wordt.
 final int LEEG = 0;
 final int SCHAT = 1;
 final int RIDDER = 2;
@@ -6,38 +7,58 @@ final int SINKPOOL = 4;
 final int KONING = 5;
 final int MUUR = 6;
 
+// Vul elke cell met de waarde 100, tel hierbij op 1 van de elementen, de cellen worden alleen getoond wanneer de cellen een waarde bevatten die onder de 100 ligt, de waarde van de cell zal alleen -100 worden wanneer een bom op of om de cell explodeert.
+final int GEDEKTECELL = 100;
+final int TOONCELL = -100;
+final int NULL = -1;
+
+// Arrays om te wisselen tussen de verschillende opties in het hoofdmenu
 int[] aantalSpelers = { 1, 2 };
 int[] aantalSchatten = { 10, 15, 20, 25, 30 };
 int[] aantalBommenDepots = {3, 6, 9, 12, 15 };
+
+// Waardes die bepalen hoeveel muren, sinkpools en ridders in het bord getekend worden.
 int nMuren = 6;
 int nSinkPools = 6;
 int nRidders = 2;
 
+// Index die bepaalt welke opties gekozen zijn in het hoofdmenu, door deze waarde globaal te maken kan je makkelijk de kleuren van de geselecteerde indexes veranderen.
 int indexGekozenAantalSpelers = 0;
 int indexGekozenAantalSchatten = 2;
 int indexGekozenAantalBommenDepots = 2;
 
+// Variabeles die de waarde van de hoofdmenu opties bevatten.
 int gekozenAantalSpelers = aantalSpelers[indexGekozenAantalSpelers];
 int gekozenAantalSchatten = aantalSchatten[indexGekozenAantalSchatten];
 int gekozenAantalBommenDepots = aantalBommenDepots[indexGekozenAantalBommenDepots];
 
 // Creeër een nieuw grid wat geshuffled wordt in de setup functie
-int aantalGridCellsX = 10;
-int aantalGridCellsY = 25;
+int aantalGridCellsX = 12;
+int aantalGridCellsY = 30;
 
+// Bord dementies
+final float bordMargeTussen = schermBreedte / 20;
+final float bordMargeBoven = 50;
+final float bordBreedte = (schermBreedte - bordMargeTussen) / 2;
+final float bordHoogte = schermHoogte - bordMargeBoven;
+
+// Waardes die bijhouden welke column en rij de speler(s) voor het laatst hebben geklikt.
+int[] clickedColEnRijSpeler1 = new int[2];
+int[] clickedColEnRijSpeler2 = new int[2];
+
+int clickedColSpeler1;
+int clickedRijSpeler1;
+int clickedColSpeler2;
+int clickedRijSpeler2;
+
+// Het bord voor beide spelers wat gevuld wordt met de spel elementen.
+// SPELER 1 SPEELT TEGEN SPELBORD 1
+// SPELER 2 SPEELT TEGEN SPELBORD 2
 int[][] spelBordSpeler1;
 int[][] spelBordSpeler2;
 
-// Vul een spelbord met lege cellen, vul ze hierna met alle andere elementen.
-int[][] vulSpelBord(int[][] bord) {
-  for (int rijTeller = 0; rijTeller < bord.length; rijTeller++) {
-    for (int colTeller = 0; colTeller < bord[rijTeller].length; colTeller++) {
-      bord[rijTeller][colTeller] = LEEG;
-    }
-  }
-
-  return bord;
-}
+boolean speler1AanDeBeurt = true;
+boolean speler2AanDeBeurt = !speler1AanDeBeurt;
 
 // Een methode die mbv de parameters bepaalt hoeveel rijen en columns getekend moeten worden, hierna wordt een getallenlijst aangemaakt die even groot is dat als er cellen zitten in hoeveel rijen en columns er zijn,
 // met de ontvangen array wordt bepaalt hoeveel rijen en columns er zijn, hierna wordt elke cell 1 voor 1 gevult met de geshuffelde lijst.
@@ -49,49 +70,41 @@ int[][] setupSpelBord(int aantalRijen, int aantalCols) {
   // Creeër een variabele die elke keer 1 omhoog telt wanneer een element wordt toegevoegd aan de array, deze kan je gebruiken in verschillende loops en de waarde blijft geupdated, hiermee zorg je ervoor dat waardes niet in dezelfde cell geplaatst worden.
   int indexVulMetElementen = 0;
 
+  // Alle loops die nodig zijn om alle cellen met de verschillende elementen te vullen, eerst krijgt elke cell de GEDEKTECELL waarde 100, hierna wordt als er een element aan toegevoegd wordt de waarde van het ELEMENT opgeteld bij de GEDEKTECELL waarde.
+  // Om te zorgen dat de cellen getoond worden moet er een bom belanden op de cell, als dit gebeurt wordt er -100 opgeteld bij de waarde van de cell, hierdoor zal de waarde alleen nog de waarde van het ELEMENT bevatten en dan zal deze getoond worden aan de speler(s).
   for (int getallenTeller = 0; getallenTeller < aantalGetallen; getallenTeller++) {
-    getallenLijst[getallenTeller] = LEEG;
+    getallenLijst[getallenTeller] += GEDEKTECELL + LEEG;
   }
-
   for (int schatTeller = 0; schatTeller < gekozenAantalSchatten; schatTeller++) {
     indexVulMetElementen++;
 
-    getallenLijst[indexVulMetElementen] = SCHAT;
-    println(indexVulMetElementen);
+    getallenLijst[indexVulMetElementen] += SCHAT;
   }
-
   for (int ridderTeller = 0; ridderTeller < nRidders; ridderTeller++) {
     indexVulMetElementen++;
 
-    getallenLijst[indexVulMetElementen] = RIDDER;
-    println(indexVulMetElementen);
+    getallenLijst[indexVulMetElementen] += RIDDER;
   }
-  
-    for (int murenTeller = 0; murenTeller < nMuren; murenTeller++) {
+  for (int murenTeller = 0; murenTeller < nMuren; murenTeller++) {
     indexVulMetElementen++;
 
-    getallenLijst[indexVulMetElementen] = MUUR;
-    println(indexVulMetElementen);
+    getallenLijst[indexVulMetElementen] += MUUR;
   }
-  
-    for (int sinkPoolTeller = 0; sinkPoolTeller < nSinkPools; sinkPoolTeller++) {
+  for (int sinkPoolTeller = 0; sinkPoolTeller < nSinkPools; sinkPoolTeller++) {
     indexVulMetElementen++;
 
-    getallenLijst[indexVulMetElementen] = SINKPOOL;
-    println(indexVulMetElementen);
+    getallenLijst[indexVulMetElementen] += SINKPOOL;
   }
-  
-    for (int bommenDepotTeller = 0; bommenDepotTeller < gekozenAantalBommenDepots; bommenDepotTeller++) {
+  for (int bommenDepotTeller = 0; bommenDepotTeller < gekozenAantalBommenDepots; bommenDepotTeller++) {
     indexVulMetElementen++;
 
-    getallenLijst[indexVulMetElementen] = BOMDEPOT;
-    println(indexVulMetElementen);
+    getallenLijst[indexVulMetElementen] += BOMDEPOT;
   }
-  
+
   indexVulMetElementen++;
-  // Vul voor de laatste keer dat de index gebruikt wordt de laatste index met een koning.
-  getallenLijst[indexVulMetElementen] = KONING;
 
+  // Vul voor de laatste keer dat de index gebruikt wordt de laatste index met een koning.
+  getallenLijst[indexVulMetElementen] += KONING;
   getallenLijst = shuffleGetallenLijst(getallenLijst, aantalGetallen);
 
   int counter = 0;
@@ -120,36 +133,101 @@ int[] shuffleGetallenLijst(int getallenLijst[], int nGetallen) {
 }
 
 // teken een spelbord op het scherm met alle nodige parameters.
-void toonSpelBord(int[][] spelBord, int bordX, int bordY, int bordBreedte, int bordHoogte) {
+void toonSpelBord(int[][] spelBord, int bordX, int bordY, float bordBreedte, float bordHoogte) {
   int aantalRijen = spelBord.length;
   int aantalKolommen = spelBord[0].length;
 
-  int celBreedte = bordBreedte / aantalKolommen;
-  int celHoogte = bordHoogte / aantalRijen; 
+  float celBreedte = bordBreedte / aantalKolommen;
+  float celHoogte = bordHoogte / aantalRijen; 
 
   for (int rijTeller = 0; rijTeller < aantalRijen; rijTeller++) {
     for (int colTeller = 0; colTeller < aantalKolommen; colTeller++) {
-      int x = bordX + colTeller * celBreedte;
-      int y = bordY + rijTeller * celHoogte; 
+      float x = bordX + colTeller * celBreedte;
+      float y = bordY + rijTeller * celHoogte; 
       int kleur = #FFFFFF;
 
-      if (spelBord[rijTeller][colTeller] == LEEG) {
-        kleur = WIT;
-      } else if (spelBord[rijTeller][colTeller] == SCHAT) {
-        kleur = PAARS;
-      } else if (spelBord[rijTeller][colTeller] == BOMDEPOT) {
-        kleur = BRUIN;
-      } else if (spelBord[rijTeller][colTeller] == RIDDER) {
-        kleur = ROOD;
-      } else if (spelBord[rijTeller][colTeller] == KONING) {
-        kleur = GEEL;
-      } else if (spelBord[rijTeller][colTeller] == SINKPOOL) {
-        kleur = BLAUW;
-      } else if (spelBord[rijTeller][colTeller] == MUUR) {
-        kleur = GRIJS;
+      if (spelBord[rijTeller][colTeller] < 100) {
+        if (spelBord[rijTeller][colTeller] == LEEG) {
+          kleur = GROEN;
+        } else if (spelBord[rijTeller][colTeller] == SCHAT) {
+          kleur = PAARS;
+        } else if (spelBord[rijTeller][colTeller] == BOMDEPOT) {
+          kleur = BRUIN;
+        } else if (spelBord[rijTeller][colTeller] == RIDDER) {
+          kleur = ROOD;
+        } else if (spelBord[rijTeller][colTeller] == KONING) {
+          kleur = GEEL;
+        } else if (spelBord[rijTeller][colTeller] == SINKPOOL) {
+          kleur = BLAUW;
+        } else if (spelBord[rijTeller][colTeller] == MUUR) {
+          kleur = GRIJS;
+        }
       }
       fill(kleur);
       rect(x, y, celBreedte, celHoogte);
     }
   }
+}
+
+// Een functie die kliks op het grid detecteerd, met de coördinaten van de puzzle is makkelijk te bepalen waar de randen van elke cel liggen
+int[] verkrijgGeklikteColEnRij(int[][] spelBord, int spelBordX, int spelBordY, float bordBreedte, float bordHoogte, float muisX, float muisY) {
+  // Maak de waarde van beide variabelen standaard NULL zodat de waarde alleen herkend wordt wanneer deze aangepast wordt en dus niet meer NULL is.
+  int[] colsRijenIndexes = { NULL, NULL };
+
+  float afstandX = muisX - spelBordX;
+  float afstandY = muisY - spelBordY;
+  
+  if (afstandX > 0 && afstandX < bordBreedte && afstandY > 0 && afstandY < bordHoogte) {
+    for (int rijTeller = 0; rijTeller < spelBord.length; rijTeller++) {
+      for (int colTeller = 0; colTeller < spelBord[rijTeller].length; colTeller++) {
+        float blokjesHoogte = bordHoogte / float(spelBord.length);
+        float blokjesBreedte = bordBreedte / float(spelBord[rijTeller].length);
+
+        int colClicked = floor((afstandX / blokjesBreedte));
+        int rijClicked = floor((afstandY / blokjesHoogte));
+
+        colsRijenIndexes[0] = colClicked;
+        colsRijenIndexes[1] = rijClicked;
+
+        //println(colsRowsIndexes);
+        println(afstandX, afstandY);
+        return colsRijenIndexes;
+      }
+    }
+  }
+
+  return colsRijenIndexes;
+}
+
+// Deze methode ontvangt een spelbord en de geklikte column en rij binnen het meegegeven bord, aan de hand van het ELEMENT die binnen de geklikte cell ligt wordt bepaalt wat er precies gebeurt.
+int[][] gooiBomOpBord(int[][] spelBord, int clickedCol, int clickedRij) {
+  if (spelBord[clickedRij][clickedCol] >= GEDEKTECELL) {
+    spelBord[clickedRij][clickedCol] += TOONCELL;
+
+    if (clickedCol > 0) {
+      if (spelBord[clickedRij][clickedCol - 1] >= GEDEKTECELL) {
+        spelBord[clickedRij][clickedCol - 1] += TOONCELL;
+      }
+    }
+
+    if (clickedCol < spelBord[0].length - 1) {
+      if (spelBord[clickedRij][clickedCol + 1] >= GEDEKTECELL) {
+        spelBord[clickedRij][clickedCol + 1] += TOONCELL;
+      }
+    }
+
+    if (clickedRij > 0) {
+      if (spelBord[clickedRij - 1][clickedCol] >= GEDEKTECELL) {
+        spelBord[clickedRij - 1][clickedCol] += TOONCELL;
+      }
+    }
+
+    if (clickedRij < spelBord.length - 1) {
+      if (spelBord[clickedRij + 1][clickedCol] >= GEDEKTECELL) {
+        spelBord[clickedRij + 1][clickedCol] += TOONCELL;
+      }
+    }
+  }
+
+  return spelBord;
 }
