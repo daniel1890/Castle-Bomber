@@ -54,15 +54,15 @@ void draw() {
 }
 
 void mouseClicked() {
-  int muisX = mouseX;
-  int muisY = mouseY;
+  float muisX = mouseX;
+  float muisY = mouseY;
 
   switch (spelStatus) {
   case SCHERM_START:
     verwerkMuisKlik_StartScherm(muisX, muisY);
     break;
   case SCHERM_SPEL:
-
+    verwerkMuisKlik_SpelScherm(muisX, muisY);
     break;
   case SCHERM_EIND:
 
