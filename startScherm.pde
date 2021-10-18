@@ -25,7 +25,7 @@ void toonStartScherm() {
 }
 
 
-void verwerkMuisKlik_StartScherm(int muisX, int muisY) {
+void verwerkMuisKlik_StartScherm(float muisX, float muisY) {
   boolean raakStartKnop = verwerkMuisKlik_Knop(knopStart, muisX, muisY);
 
   // Maak een boolean array aan die evenveel plekken heeft als dat er knoppen zijn om te kiezen tussen aantal spelers, verwerk muisklik voor elke knop in de spelers array.
@@ -49,11 +49,11 @@ void verwerkMuisKlik_StartScherm(int muisX, int muisY) {
 
   // herken input op de start knop, wanneer deze ingedrukt wordt begint het spel
   if (raakStartKnop) {
-    spelStatus = SCHERM_SPEL;
-    
     // setup spelborden wanneer alle gewilde instellingen geselecteerd zijn.
-    spelBordSpeler1 = setupSpelBord(25, 10);
-    spelBordSpeler2 = setupSpelBord(25, 10);
+    spelBordSpeler1 = setupSpelBord(aantalGridCellsY, aantalGridCellsX);
+    spelBordSpeler2 = setupSpelBord(aantalGridCellsY, aantalGridCellsX);
+
+    spelStatus = SCHERM_SPEL;
   }
 
   // Herken input in de rij waar de speler de hoeveelheid spelers kan bepalen, er wordt over elke knop gelooped.
