@@ -1,10 +1,11 @@
 int startSchermKnopHoogte = 75;
 
 // arrays die alle data bewaren wat betreft de knoppen die getekend worden op het start scherm.
+int lengteKnopData = 7;
 int[] knopStart = {0, 500, schermBreedte, startSchermKnopHoogte, GEEL, VORM_BLOK, BLAUW};
-int[][] spelersKnoppen = genereerKnoppenRij(aantalSpelers, 65);
-int[][] schatKnoppen = genereerKnoppenRij(aantalSchatten, 215);
-int[][] bommenDepotsKnoppen = genereerKnoppenRij(aantalBommenDepots, 365);
+int[][] spelersKnoppen = genereerKnoppenRij(aantalSpelers, 65, lengteKnopData);
+int[][] schatKnoppen = genereerKnoppenRij(aantalSchatten, 215, lengteKnopData);
+int[][] bommenDepotsKnoppen = genereerKnoppenRij(aantalBommenDepots, 365, lengteKnopData);
 
 void toonStartScherm() {
   tekenKnop(knopStart, "START SPEL");
@@ -52,6 +53,13 @@ void verwerkMuisKlik_StartScherm(float muisX, float muisY) {
     // setup spelborden wanneer alle gewilde instellingen geselecteerd zijn.
     spelBordSpeler1 = setupSpelBord(aantalGridCellsY, aantalGridCellsX);
     spelBordSpeler2 = setupSpelBord(aantalGridCellsY, aantalGridCellsX);
+
+    scoreSpeler1 = 0;
+    scoreSpeler2 = 0;
+    aantalBommenSpeler1 = 30;
+    aantalBommenSpeler2 = 30;
+    speler1Gewonnen = false;
+    speler2Gewonnen = false;
 
     spelStatus = SCHERM_SPEL;
   }
