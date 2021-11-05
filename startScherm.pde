@@ -1,8 +1,8 @@
 int startSchermKnopHoogte = 75;
 
 // arrays die alle data bewaren wat betreft de knoppen die getekend worden op het start scherm.
-int lengteKnopData = 7;
-int[] knopStart = {0, 500, schermBreedte, startSchermKnopHoogte, GEEL, VORM_BLOK, BLAUW};
+int lengteKnopData = 8;
+int[] knopStart = {0, 500, schermBreedte, startSchermKnopHoogte, GEEL, VORM_BLOK, BLAUW, 50};
 int[][] spelersKnoppen = genereerKnoppenRij(aantalSpelers, 65, lengteKnopData);
 int[][] schatKnoppen = genereerKnoppenRij(aantalSchatten, 215, lengteKnopData);
 int[][] bommenDepotsKnoppen = genereerKnoppenRij(aantalBommenDepots, 365, lengteKnopData);
@@ -25,7 +25,6 @@ void toonStartScherm() {
   text("AANTAL BOMMENDEPOTS", schermBreedte / 2, 325);
 }
 
-
 void verwerkMuisKlik_StartScherm(float muisX, float muisY) {
   boolean raakStartKnop = verwerkMuisKlik_Knop(knopStart, muisX, muisY);
 
@@ -47,19 +46,24 @@ void verwerkMuisKlik_StartScherm(float muisX, float muisY) {
     raakBommenDepotsKnoppen[bommenDepotKnoppenIndex] = verwerkMuisKlik_Knop(bommenDepotsKnoppen[bommenDepotKnoppenIndex], muisX, muisY );
   }
 
-
   // herken input op de start knop, wanneer deze ingedrukt wordt begint het spel
   if (raakStartKnop) {
     // setup spelborden wanneer alle gewilde instellingen geselecteerd zijn.
     spelBordSpeler1 = setupSpelBord(aantalGridCellsY, aantalGridCellsX);
     spelBordSpeler2 = setupSpelBord(aantalGridCellsY, aantalGridCellsX);
 
+    // Reset alle waardes naar de startwaardes zodat alles netjes opnieuw begint.
     scoreSpeler1 = 0;
     scoreSpeler2 = 0;
-    aantalBommenSpeler1 = 30;
-    aantalBommenSpeler2 = 30;
+    aantalBommenSpeler1 = aantalBommenStart;
+    aantalBommenSpeler2 = aantalBommenStart;
+    tekenVolgendeKnop = false;
     speler1Gewonnen = false;
     speler2Gewonnen = false;
+    speler1Verloren = false;
+    speler2Verloren = false;
+    speler1AanDeBeurt = true;
+    speler2AanDeBeurt = false;
 
     spelStatus = SCHERM_SPEL;
   }
@@ -83,4 +87,6 @@ void verwerkMuisKlik_StartScherm(float muisX, float muisY) {
       indexGekozenAantalBommenDepots = indexBommenDepotKnop;
     }
   }
+
+  tekenOpnieuw = true;
 }

@@ -5,6 +5,7 @@ final int HOOGTE = 3;
 final int KLEUR = 4;
 final int VORM = 5;
 final int TEKST_KLEUR = 6;
+final int TEKST_GROOTTE = 7;
 
 final int VORM_BLOK = 0;
 final int VORM_ROND = 1;
@@ -18,6 +19,7 @@ void tekenKnop(int[] data, String tekst) {
   int kleur = data[KLEUR];
   int vorm = data[VORM];      // Dit wordt nu nog genegeerd
   int tekstKleur = data[TEKST_KLEUR];
+  int tekstGrootte = data[TEKST_GROOTTE];
 
   // voorbereidingen / berekeningen
   int tekstX = x + breedte / 2;
@@ -28,14 +30,13 @@ void tekenKnop(int[] data, String tekst) {
   rect(x, y, breedte, hoogte);
 
   fill(tekstKleur);  // TODO: tekstkleur meegeven
-  textSize(50);   // TODO: tekstgrootte meegeven
+  textSize(tekstGrootte);   // TODO: tekstgrootte meegeven
   textAlign(CENTER, CENTER);
   text(tekst, tekstX, tekstY);
 }
 
-
 // een methode die een boolean waarde returned, de waarde die teruggegeven wordt is alleen true wanneer de gebruiker binnen de x en y coördinaten van de knop klikt dus er kan maar 1 knop tegelijk geklikt worden.
-boolean verwerkMuisKlik_Knop(int[] knop, int muisX, int muisY) {
+boolean verwerkMuisKlik_Knop(int[] knop, float muisX, float muisY) {
   int x = knop[X];
   int y = knop[Y];
   int breedte = knop[BREEDTE];
@@ -49,14 +50,15 @@ boolean verwerkMuisKlik_Knop(int[] knop, int muisX, int muisY) {
 }
 
 // een methode die een 2d array creeërt met knoppen die getekend worden in een enkele rij, het aantal knoppen wordt bepaald door de lengte van de array die meegegeven wordt in de parameters.
-int[][] genereerKnoppenRij(int[] data, int y) {
+int[][] genereerKnoppenRij(int[] data, int y, int lengteKnopData) {
 
-  int[][] knoppen = new int[data.length][7];
+  int[][] knoppen = new int[data.length][lengteKnopData];
   int knopBreedte = schermBreedte / data.length;
   int knopHoogte = 75;
 
+  // Verander i
   for (int i = 0; i < knoppen.length; i++ ) {
-    int[] enkeleKnopData = {0 + (i * knopBreedte), y, knopBreedte, knopHoogte, GEEL, VORM_BLOK, BLAUW };
+    int[] enkeleKnopData = {0 + (i * knopBreedte), y, knopBreedte, knopHoogte, GEEL, VORM_BLOK, BLAUW, 50 };
     for (int j = 0; j < knoppen[i].length; j++) {
       knoppen[i][j] = enkeleKnopData[j];
     }
